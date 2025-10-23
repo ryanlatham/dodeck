@@ -121,7 +121,7 @@ resource "aws_apprunner_service" "this" {
     instance_role_arn = aws_iam_role.instance.arn
   }
 
-  observability_configuration { observability_enabled = true }
+  observability_configuration { observability_enabled = false }
   tags = var.tags
 }
 
