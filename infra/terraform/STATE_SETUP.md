@@ -76,3 +76,17 @@ Populate GitHub secrets/variables:
 - `TF_STATE_BUCKET=dodeck-terraform-state`
 - `TF_STATE_KEY=service/dev/terraform.tfstate`
 - `TF_STATE_LOCK_TABLE=dodeck-terraform-locks`
+
+## 5. Additional Environments
+
+For **staging** (and later production) create distinct Terraform state keys and
+parameter values:
+
+- S3 object key: `service/staging/terraform.tfstate`
+- DynamoDB table: reuse `dodeck-terraform-locks`
+- SSM parameters: `/dodeck-staging/service/auth0_issuer` and
+  `/dodeck-staging/service/auth0_audience`
+- ECR repository: `dodeck-service-staging`
+
+Configure GitHub environment-level secrets/variables for `staging` matching the
+names used in the workflow (`TF_STATE_*`, `AUTH0_*`, `ECR_REPOSITORY`, etc.).

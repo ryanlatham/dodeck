@@ -13,7 +13,7 @@ provider "aws" {
 locals {
   tags = {
     Project     = var.project_name
-    Environment = "dev"
+    Environment = "staging"
   }
 }
 
@@ -28,7 +28,7 @@ data "aws_ecr_repository" "service" {
 
 resource "aws_ssm_parameter" "auth0_issuer" {
   name        = "/${var.project_name}/service/auth0_issuer"
-  description = "Auth0 issuer for DoDeck service"
+  description = "Auth0 issuer for DoDeck service (staging)"
   type        = "SecureString"
   value       = var.auth0_issuer
   tags        = local.tags
@@ -36,7 +36,7 @@ resource "aws_ssm_parameter" "auth0_issuer" {
 
 resource "aws_ssm_parameter" "auth0_audience" {
   name        = "/${var.project_name}/service/auth0_audience"
-  description = "Auth0 audience for DoDeck service"
+  description = "Auth0 audience for DoDeck service (staging)"
   type        = "SecureString"
   value       = var.auth0_audience
   tags        = local.tags

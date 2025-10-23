@@ -1,3 +1,3 @@
-- [ ] Document rollout plan for staging/prod: separate Terraform backend configs + environment inputs.
+- [ ] Configure staging GitHub environment secrets/variables and run `service-ci` with `environment=staging` to verify pipeline.
 - [ ] Add monitoring/alerting (CloudWatch alarms, App Runner health notifications) for service endpoints.
-- [ ] Automate secure storage/rotation for Auth0 secrets (e.g., migrate to Secrets Manager) and ensure pipeline uses parameter store outputs.
+- [ ] Evaluate migrating Auth0 secrets to AWS Secrets Manager (with Terraform) for rotation support.

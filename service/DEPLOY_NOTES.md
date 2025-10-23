@@ -75,6 +75,7 @@
   - `ECR_REPOSITORY` (defaults to `dodeck-service` if unset)
   - `CORS_ALLOWED_ORIGINS`
 - Trigger deployment via `workflow_dispatch` or tags; job `deploy-<env>` builds, pushes image, and runs Terraform with the new tag.
+- Runtime `ENVIRONMENT` value is provided via Terraform (`dev`, `staging`, etc.) and surfaces in `/healthz` responses.
 
 **Current AWS values (dev account 309090259750):**
 - `AWS_DEPLOY_ROLE_ARN` = `arn:aws:iam::309090259750:role/dodeck-service-deploy`

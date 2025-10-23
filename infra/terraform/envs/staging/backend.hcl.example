@@ -1,0 +1,5 @@
+bucket         = "dodeck-terraform-state"
+key            = "service/staging/terraform.tfstate"
+region         = "us-west-2"
+dynamodb_table = "dodeck-terraform-locks"
+encrypt        = true
