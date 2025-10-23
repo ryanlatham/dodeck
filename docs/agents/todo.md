@@ -1,3 +1,3 @@
-- [ ] Populate GitHub secrets (`AWS_DEPLOY_ROLE_ARN`, `AUTH0_ISSUER`, `AUTH0_AUDIENCE`, `TF_STATE_BUCKET`, `TF_STATE_KEY`, `TF_STATE_LOCK_TABLE`).
-- [ ] Configure repo variables (`AWS_REGION`, `ECR_REPOSITORY`, `CORS_ALLOWED_ORIGINS`) and copy `backend.hcl.example` → `backend.hcl` for workflows.
-- [ ] Trigger `service-ci` workflow_dispatch (dev) to validate deploy job and capture App Runner URL; add promotion plan for staging/prod.
+- [ ] Document rollout plan for staging/prod: separate Terraform backend configs + environment inputs.
+- [ ] Add monitoring/alerting (CloudWatch alarms, App Runner health notifications) for service endpoints.
+- [ ] Automate secure storage/rotation for Auth0 secrets (e.g., migrate to Secrets Manager) and ensure pipeline uses parameter store outputs.

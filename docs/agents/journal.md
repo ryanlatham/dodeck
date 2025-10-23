@@ -38,6 +38,45 @@
 - Current state: ready
 - Owner (if any): codex
 - Timebox remaining: 0m
+
+## [2025-10-23 08:10 PT] First service-ci deploy run
+
+**Goal**
+- Execute the new GitHub Actions pipeline end-to-end and record deployment outputs.
+
+**Context**
+- Files: .github/workflows/service.yml, infra/terraform/modules/apprunner, AWS resources (ECR, DynamoDB, App Runner, SSM)
+- Related checkpoints: 2025-10-22_08-40-PT, 2025-10-22_22-30-PT
+
+**Plan**
+- [x] Fix workflow YAML (backend config), add terraform setup
+- [x] Iterate on IAM deploy role permissions until terraform apply succeeds
+- [x] Ensure ECR repo availability (data source) and App Runner access role
+- [x] Capture App Runner URL from successful run
+
+**Work Log**
+- 00:10 Committed workflow fixes (`setup-terraform`, map secrets) and iterated IAM trust (OIDC role)
+- 00:36 Added S3/DDB state resources, OIDC deploy role, ECR repository; updated Terraform to use data source
+- 01:25 Introduced App Runner IAM instance/access roles, disabled observability, and expanded deploy IAM policy to cover DynamoDB/ECR/SSM/IAM actions
+- 01:55 Triggered `service-ci` via `gh workflow run ...`; after multiple adjustments run completed with `deploy-dev`
+- 02:05 Verified outputs: DynamoDB table `dodeck`, App Runner URL `https://skcdqfw5pt.us-west-2.awsapprunner.com`
+
+**Result**
+- done — see workflow run 18741630014 (deploy-dev) and AWS resources
+
+**Evidence**
+- `gh run watch 18741630014 -R ryanlatham/dodeck`
+- AWS CLI: `aws apprunner list-services`, `aws dynamodb describe-table dodeck`
+- App Runner URL: `https://skcdqfw5pt.us-west-2.awsapprunner.com`
+
+**Next**
+- [ ] Promote image/terraform changes to staging/prod once environments exist
+- [ ] Configure monitoring/alerts for App Runner + DynamoDB (CloudWatch alarms)
+
+**Handoff**
+- Current state: ready
+- Owner (if any): codex
+- Timebox remaining: 0m
 ## [2025-10-22 08:18 PT] Prep infra & CI for service deploy
 
 **Goal**
