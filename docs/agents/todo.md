@@ -1,3 +1,3 @@
-- [ ] Configure staging GitHub environment secrets/variables and run `service-ci` with `environment=staging` to verify pipeline.
 - [ ] Add monitoring/alerting (CloudWatch alarms, App Runner health notifications) for service endpoints.
 - [ ] Evaluate migrating Auth0 secrets to AWS Secrets Manager (with Terraform) for rotation support.
+- [ ] Define promotion policy (dev → staging → prod) with manual approval gates in Actions workflows.

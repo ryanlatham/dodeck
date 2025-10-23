@@ -99,6 +99,7 @@
 - 00:18 Parameterized service-ci deploy job (dynamic working dir, TF env var, ENVIRONMENT var)
 - 00:22 Extended deploy IAM policy for remaining ECR/SSM/IAM actions; reran workflow (dev) to ensure success
 - 00:26 Updated deploy notes/state setup with staging guidance; refreshed TODO list
+- 00:34 Provisioned staging secrets/ECR; staged run `gh workflow run ... -f environment=staging` → `https://pi57pcetyg.us-west-2.awsapprunner.com`
 
 **Result**
 - done — staging env has Terraform scaffolding and pipeline now switches by `environment` input
