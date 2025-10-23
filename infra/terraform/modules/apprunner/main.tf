@@ -48,6 +48,16 @@ data "aws_iam_policy_document" "assume" {
   }
 }
 
+data "aws_iam_policy_document" "access_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["build.apprunner.amazonaws.com"]
+    }
+  }
+}
+
 data "aws_iam_policy_document" "instance" {
   statement {
     sid = "DynamoDBAccess"
@@ -96,10 +106,21 @@ resource "aws_iam_role" "instance" {
   tags               = var.tags
 }
 
+resource "aws_iam_role" "access" {
+  name               = "${var.service_name}-access"
+  assume_role_policy = data.aws_iam_policy_document.access_assume.json
+  tags               = var.tags
+}
+
 resource "aws_iam_role_policy" "instance" {
   name   = "${var.service_name}-instance-policy"
   role   = aws_iam_role.instance.id
   policy = data.aws_iam_policy_document.instance.json
+}
+
+resource "aws_iam_role_policy_attachment" "access" {
+  role       = aws_iam_role.access.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
 }
 
 resource "aws_apprunner_service" "this" {
@@ -112,6 +133,9 @@ resource "aws_apprunner_service" "this" {
         port                          = "8080"
         runtime_environment_variables = local.runtime_env_vars
         runtime_environment_secrets   = local.runtime_env_secrets
+      }
+      authentication_configuration {
+        access_role_arn = aws_iam_role.access.arn
       }
     }
     auto_deployments_enabled = true
