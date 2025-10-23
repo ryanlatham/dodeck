@@ -59,6 +59,7 @@
 6. Smoke test:
    - `curl $service_url/healthz`
    - Authenticated CRUD via integration script.
+   - Current dev URL: `https://skcdqfw5pt.us-west-2.awsapprunner.com`
 
 ## CI/CD Credentials & Automation
 - **Preferred:** GitHub Actions OIDC → IAM role (see `docs/agents/decisions.md`). Create role `dodeck-service-deploy` with trust policy for `token.actions.githubusercontent.com` and attach permissions for:
