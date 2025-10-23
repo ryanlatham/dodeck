@@ -98,13 +98,13 @@ jobs:
           : "${TF_STATE_BUCKET:?missing TF_STATE_BUCKET secret}"
           : "${TF_STATE_KEY:?missing TF_STATE_KEY secret}"
           : "${TF_STATE_LOCK_TABLE:?missing TF_STATE_LOCK_TABLE secret}"
-          cat > backend.hcl <<EOF
-bucket         = "${TF_STATE_BUCKET}"
-key            = "${TF_STATE_KEY}"
-region         = "${AWS_REGION}"
-dynamodb_table = "${TF_STATE_LOCK_TABLE}"
-encrypt        = true
-EOF
+          {
+            printf 'bucket         = "%s"\n' "${TF_STATE_BUCKET}"
+            printf 'key            = "%s"\n' "${TF_STATE_KEY}"
+            printf 'region         = "%s"\n' "${AWS_REGION}"
+            printf 'dynamodb_table = "%s"\n' "${TF_STATE_LOCK_TABLE}"
+            printf 'encrypt        = true\n'
+          } > backend.hcl
 
       - name: Terraform apply
         working-directory: infra/terraform/envs/dev
