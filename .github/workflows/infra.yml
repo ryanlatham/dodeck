@@ -1,0 +1,21 @@
+name: infra-validate
+on:
+  push:
+    paths: ["infra/**", ".github/workflows/infra.yml"]
+  pull_request:
+    paths: ["infra/**"]
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Terraform fmt
+        working-directory: infra/terraform/envs/dev
+        run: terraform fmt -check -recursive
+      - name: Terraform init (no backend)
+        working-directory: infra/terraform/envs/dev
+        run: terraform init -upgrade
+      - name: Terraform validate
+        working-directory: infra/terraform/envs/dev
+        run: terraform validate

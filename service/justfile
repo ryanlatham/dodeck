@@ -1,0 +1,17 @@
+# Install `just` locally to run these tasks: https://github.com/casey/just
+set shell := ["bash", "-cu"]
+
+install:
+	pip install -r requirements.txt
+
+run:
+	uvicorn src.main:app --reload --port 8080
+
+test:
+	pytest -q
+
+compose-up:
+	docker compose -f tests/docker-compose.yml up -d
+
+compose-down:
+	docker compose -f tests/docker-compose.yml down -v

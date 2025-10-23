@@ -1,0 +1,18 @@
+{
+  "name": "dodeck",
+  "version": "1.0.0",
+  "description": "- `service/` — FastAPI service for Decks/Dos and sharing (Auth0-protected). - `infra/` — Terraform for AWS resources (DynamoDB, ECR, App Runner, etc.). - `web/` — React SPA (Auth0 PKCE) with glassmorphism UI.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "auth0-deploy-cli": "^8.18.0"
+  }
+}

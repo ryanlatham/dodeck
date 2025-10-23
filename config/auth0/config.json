@@ -1,0 +1,4 @@
+{
+  "AUTH0_ALLOW_DELETE": false,
+  "EXCLUDED_CLIENTS": ["All Applications"]
+}
