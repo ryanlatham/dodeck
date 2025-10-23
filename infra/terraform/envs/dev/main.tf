@@ -22,9 +22,8 @@ module "ddb" {
   table_name = var.project_name
 }
 
-module "ecr" {
-  source = "../../modules/ecr"
-  name   = "${var.project_name}-service"
+data "aws_ecr_repository" "service" {
+  name = var.service_repository_name
 }
 
 resource "aws_ssm_parameter" "auth0_issuer" {
@@ -46,7 +45,7 @@ resource "aws_ssm_parameter" "auth0_audience" {
 module "apprunner" {
   source       = "../../modules/apprunner"
   service_name = "${var.project_name}-api"
-  image        = "${module.ecr.repository_url}:${var.service_image_tag}"
+  image        = "${data.aws_ecr_repository.service.repository_url}:${var.service_image_tag}"
   table_name   = module.ddb.table_name
   table_arn    = module.ddb.table_arn
   env_vars = {
@@ -63,7 +62,7 @@ module "apprunner" {
 
 output "service_url" { value = module.apprunner.service_url }
 output "table_name" { value = module.ddb.table_name }
-output "ecr_repo_url" { value = module.ecr.repository_url }
+output "ecr_repo_url" { value = data.aws_ecr_repository.service.repository_url }
 
 output "auth0_issuer_parameter" { value = aws_ssm_parameter.auth0_issuer.name }
 output "auth0_audience_parameter" { value = aws_ssm_parameter.auth0_audience.name }

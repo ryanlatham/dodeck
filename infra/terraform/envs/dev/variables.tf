@@ -21,3 +21,8 @@ variable "service_image_tag" {
   type    = string
   default = "latest"
 }
+
+variable "service_repository_name" {
+  type    = string
+  default = "dodeck-service"
+}
