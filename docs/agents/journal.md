@@ -77,6 +77,44 @@
 - Current state: ready
 - Owner (if any): codex
 - Timebox remaining: 0m
+
+## [2025-10-23 08:25 PT] Stage environment scaffolding
+
+**Goal**
+- Prepare Terraform and pipeline plumbing for staging deployments.
+
+**Context**
+- Files: infra/terraform/envs/{dev,staging}, infra/terraform/modules/apprunner/main.tf, .github/workflows/service.yml, service/DEPLOY_NOTES.md
+- Related checkpoints: 2025-10-23_08-10-PT
+
+**Plan**
+- [x] Add `ENVIRONMENT` runtime support to App Runner deployment
+- [x] Introduce staging Terraform env (backend template, variables, data-driven ECR)
+- [x] Update workflow to respect `environment` input (dynamic path, vars)
+- [x] Document staging secrets/vars + update TODOs
+
+**Work Log**
+- 00:06 Added `environment_name` plumbing so API reports env; disabled App Runner observability by default
+- 00:12 Created `infra/terraform/envs/staging`; wired data sources for ECR and SSM parameter defaults
+- 00:18 Parameterized service-ci deploy job (dynamic working dir, TF env var, ENVIRONMENT var)
+- 00:22 Extended deploy IAM policy for remaining ECR/SSM/IAM actions; reran workflow (dev) to ensure success
+- 00:26 Updated deploy notes/state setup with staging guidance; refreshed TODO list
+
+**Result**
+- done — staging env has Terraform scaffolding and pipeline now switches by `environment` input
+
+**Evidence**
+- Commit b0bbf4c (`feat(staging): add env config and pipeline support`)
+- Workflow summary: `gh run list -R ryanlatham/dodeck --workflow service-ci --limit 1`
+
+**Next**
+- [ ] Configure staging GitHub environment secrets + run staging deploy (see TODO)
+- [ ] Add monitoring/alerting for service runtime
+
+**Handoff**
+- Current state: ready
+- Owner (if any): codex
+- Timebox remaining: 0m
 ## [2025-10-22 08:18 PT] Prep infra & CI for service deploy
 
 **Goal**
