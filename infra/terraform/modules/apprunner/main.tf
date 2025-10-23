@@ -34,13 +34,8 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  runtime_env_vars = merge({ TABLE_NAME = var.table_name }, var.env_vars)
-  runtime_env_secrets = [
-    for name, arn in var.env_secret_arns : {
-      name  = name
-      value = arn
-    }
-  ]
+  runtime_env_vars    = merge({ TABLE_NAME = var.table_name }, var.env_vars)
+  runtime_env_secrets = { for name, arn in var.env_secret_arns : name => arn }
 }
 
 data "aws_iam_policy_document" "assume" {
