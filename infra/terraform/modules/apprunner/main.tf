@@ -126,6 +126,10 @@ resource "aws_iam_role_policy_attachment" "access" {
 resource "aws_apprunner_service" "this" {
   service_name = var.service_name
   source_configuration {
+    authentication_configuration {
+      access_role_arn = aws_iam_role.access.arn
+    }
+
     image_repository {
       image_identifier      = var.image
       image_repository_type = "ECR"
@@ -133,9 +137,6 @@ resource "aws_apprunner_service" "this" {
         port                          = "8080"
         runtime_environment_variables = local.runtime_env_vars
         runtime_environment_secrets   = local.runtime_env_secrets
-      }
-      authentication_configuration {
-        access_role_arn = aws_iam_role.access.arn
       }
     }
     auto_deployments_enabled = true
