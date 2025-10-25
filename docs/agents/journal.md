@@ -1,3 +1,41 @@
+## [2025-10-25 11:20 PDT] Wire alert emails
+
+**Goal**
+- Route CloudWatch alarm notifications (App Runner health + DynamoDB throttles) to `ryalatham@gmail.com` for every environment until downstream tooling is ready.
+
+**Context**
+- Files: infra/terraform/envs/{dev,staging,prod}/variables.tf, docs/agents/{todo,handoff}.md
+- Related checkpoints: 2025-10-25_09-06-PDT (monitoring baseline)
+
+**Plan**
+- [x] Set `alert_emails` default for each environment to the provided address.
+- [x] Update docs TODO/handoff to reflect the interim routing.
+- [ ] Apply Terraform per environment once email confirmation occurs (blocked on operator action).
+
+**Work Log**
+- 00:02 Added email defaults to dev/staging/prod Terraform variables.
+- 00:05 Updated docs to mark monitoring item done and noted confirmation requirement.
+
+**Result**
+- done — see checkpoint docs/agents/checkpoints/2025-10-25_11-20-PDT.md (pending Terraform apply by operator).
+
+**Evidence**
+- `terraform -chdir=infra/terraform/envs/dev init -backend=false`
+- `terraform -chdir=infra/terraform/envs/dev validate`
+- `terraform -chdir=infra/terraform/envs/staging init -backend=false`
+- `terraform -chdir=infra/terraform/envs/staging validate`
+- `terraform -chdir=infra/terraform/envs/prod init -backend=false`
+- `terraform -chdir=infra/terraform/envs/prod validate`
+
+**Next**
+- [ ] Run Terraform apply per environment once the email subscription is confirmed.
+- [ ] Consider adding SNS topics per channel (Slack/PD) when available.
+
+**Handoff**
+- Current state: ready (pending SNS email confirmation + Terraform apply)
+- Owner (if any): codex
+- Timebox remaining: 0m
+
 ## [2025-10-25 10:50 PDT] Instrument FastAPI for X-Ray traces
 
 **Goal**

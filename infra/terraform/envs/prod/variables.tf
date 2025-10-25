@@ -30,7 +30,7 @@ variable "environment_name" {
 
 variable "alert_emails" {
   type    = list(string)
-  default = []
+  default = ["ryalatham@gmail.com"]
 }
 
 variable "enable_observability" {

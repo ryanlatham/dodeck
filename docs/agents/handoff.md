@@ -24,7 +24,7 @@
 - GitHub environment `staging` configured with required secrets/vars; dev defaults remain at repository level.
 
 ## Outstanding TODOs
-- **Monitoring/Alerting**: wire alert subscribers (SNS/email/webhook) to the new CloudWatch alarms.
+- **Monitoring/Alerting**: alarms currently email `ryalatham@gmail.com`; confirm SNS subscription and replace with team distro/Slack when available.
 - **Production Environment**: provision AWS resources + GitHub `prod` environment secrets/approvals using the new Terraform env.
 - **Observability**: FastAPI now emits X-Ray traces; monitor spans and plan log aggregation as traffic ramps up.
 - **Secrets Rotation**: decide how/when to rotate the Auth0 secrets now that they live in Secrets Manager.

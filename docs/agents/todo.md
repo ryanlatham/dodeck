@@ -1,7 +1,7 @@
 - [x] Add monitoring/alerting (CloudWatch alarms, App Runner health notifications) for service endpoints. (2025-10-25)
 - [x] Evaluate migrating Auth0 secrets to AWS Secrets Manager (with Terraform) for rotation support. (2025-10-25)
 - [x] Define promotion policy (dev → staging → prod) with manual approval gates in Actions workflows. (2025-10-25)
-- [ ] Post-project: configure SNS/email subscriptions for monitoring alerts once feature work is complete.
+- [x] Post-project: configure SNS/email subscriptions for monitoring alerts once feature work is complete. (2025-10-25) — temporarily routed to `ryalatham@gmail.com`; confirm SNS email and revisit when Slack/PD targets exist.
 - [x] Scaffold production environment (Terraform env + GitHub environment secrets/approvals) mirroring staging. (2025-10-25)
 - [ ] Provision prod AWS resources via Terraform and populate GitHub `prod` environment secrets/approvals.
 - [x] Instrument FastAPI service for X-Ray so new observability pipeline emits traces. (2025-10-25)
