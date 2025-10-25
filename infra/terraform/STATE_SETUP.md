@@ -79,8 +79,7 @@ Populate GitHub secrets/variables:
 
 ## 5. Additional Environments
 
-For **staging** (and later production) create distinct Terraform state keys and
-secret values:
+For **staging** create distinct Terraform state keys and secret values:
 
 - S3 object key: `service/staging/terraform.tfstate`
 - DynamoDB table: reuse `dodeck-terraform-locks`
@@ -91,3 +90,13 @@ secret values:
 
 Configure GitHub environment-level secrets/variables for `staging` matching the
 names used in the workflow (`TF_STATE_*`, `AUTH0_*`, `ECR_REPOSITORY`, etc.).
+
+For **production**, repeat the same process with unique names:
+
+- S3 object key: `service/prod/terraform.tfstate`
+- Secrets Manager entries:
+  - `/dodeck-prod/service/auth0_issuer`
+  - `/dodeck-prod/service/auth0_audience`
+- ECR repository: `dodeck-service-prod`
+
+Create a GitHub `prod` environment with protected approvals and secrets (`AWS_DEPLOY_ROLE_ARN`, `TF_STATE_*`, `AUTH0_*`, `ECR_REPOSITORY`, etc.) to satisfy the promotion policy enforced in `service-ci`.

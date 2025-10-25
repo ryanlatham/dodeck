@@ -10,6 +10,7 @@
   - IAM deploy role expanded to cover staging resources (DynamoDB, Secrets Manager, IAM/ECR API calls).
   - Staging run (`gh run 18753998898`) succeeded: App Runner `https://pi57pcetyg.us-west-2.awsapprunner.com`, DynamoDB table `dodeck-staging`.
 - **Promotion policy codified**: workflow_dispatch now defaults to dev, allows staging only from `main`, and restricts prod deploys to signed tags; GitHub environments should enforce manual approvals for staging/prod.
+- **Production scaffolding ready**: `infra/terraform/envs/prod` mirrors staging with Secrets Manager + monitoring integration; workflow already supports `environment=prod`.
 - **Documentation & tracking** updated (`DEPLOY_NOTES.md`, `STATE_SETUP.md`, `docs/agents/journal.md`, checkpoints, TODO).
 
 ## Repository State
@@ -23,20 +24,19 @@
 - GitHub environment `staging` configured with required secrets/vars; dev defaults remain at repository level.
 
 ## Outstanding TODOs
-- **Monitoring/Alerting**: add CloudWatch alarms (App Runner health, DynamoDB errors) and notification targets.
-- **Production Environment**: mirror staging setup (backend config, secrets/vars, App Runner & DynamoDB resources).
+- **Monitoring/Alerting**: wire alert subscribers (SNS/email/webhook) to the new CloudWatch alarms.
+- **Production Environment**: provision AWS resources + GitHub `prod` environment secrets/approvals using the new Terraform env.
 - **Observability**: consider enabling App Runner observability (needs configuration ARN) once logging destination decided.
-- **Alert Routing**: once the project stabilizes, attach SNS/email/webhook subscribers to CloudWatch alarms.
 - **Secrets Rotation**: decide how/when to rotate the Auth0 secrets now that they live in Secrets Manager.
 
 ## Next Suggested Steps
-1. Configure CloudWatch alarms/notifications for dev & staging App Runner services (plus downstream notifications).
-2. Clone staging into a production Terraform environment and wire GitHub environment secrets/approvals.
+1. Configure notification targets for the CloudWatch alarms (SNS email/webhook).
+2. Run Terraform for `infra/terraform/envs/prod` and set up the GitHub `prod` environment secrets/approvals.
 3. Decide on Auth0 secret rotation cadence (Secrets Manager rotation lambda or manual SOP).
 4. Plan observability (CloudWatch logs/metrics exports) before adding alert subscribers.
 
 ## Key Commands/References
-- Run workflow manually (dev/staging only):  
+- Run workflow manually (dev/staging only until prod ready):  
   `gh workflow run service-ci -R ryanlatham/dodeck -f environment=dev|staging --ref main`
 - Health checks:  
   `curl https://skcdqfw5pt.us-west-2.awsapprunner.com/healthz`  

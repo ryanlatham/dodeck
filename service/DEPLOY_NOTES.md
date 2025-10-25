@@ -61,6 +61,7 @@
    - Authenticated CRUD via integration script.
    - Current dev URL: `https://skcdqfw5pt.us-west-2.awsapprunner.com`
    - Current staging URL: `https://pi57pcetyg.us-west-2.awsapprunner.com`
+   - Production URL will be recorded after first prod deploy.
 
 ## CI/CD Credentials & Automation
 - **Preferred:** GitHub Actions OIDC → IAM role (see `docs/agents/decisions.md`). Create role `dodeck-service-deploy` with trust policy for `token.actions.githubusercontent.com` and attach permissions for:
@@ -77,6 +78,7 @@
   - `CORS_ALLOWED_ORIGINS`
 - Trigger deployment via `workflow_dispatch` or tags; job `deploy-<env>` builds, pushes image, and runs Terraform with the new tag.
 - Runtime `ENVIRONMENT` value is provided via Terraform (`dev`, `staging`, etc.) and surfaces in `/healthz` responses.
+ - Configure GitHub environments for `staging` and `prod` with required reviewers and secrets per the promotion policy.
 
 **Current AWS values (dev account 309090259750):**
 - `AWS_DEPLOY_ROLE_ARN` = `arn:aws:iam::309090259750:role/dodeck-service-deploy`

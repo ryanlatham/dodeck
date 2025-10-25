@@ -1,3 +1,41 @@
+## [2025-10-25 09:50 PDT] Scaffold production environment
+
+**Goal**
+- Mirror staging infrastructure into a production Terraform environment and document GitHub environment requirements for future deploys.
+
+**Context**
+- Files: infra/terraform/envs/{dev,staging}, infra/terraform/modules/**, docs/agents/{todo,decisions,handoff}.md, service/DEPLOY_NOTES.md, .github/workflows/service.yml
+- Related checkpoints: 2025-10-25_09-55-PDT (promotion policy), 2025-10-25_09-45-PDT (Secrets Manager), 2025-10-25_09-06-PDT (monitoring)
+
+**Plan**
+- [x] Copy staging Terraform env → `infra/terraform/envs/prod` with prod defaults (naming, repositories, backend key).
+- [x] Update workflow/docs to describe prod environment secrets + approvals; add TODO/decision/checkpoint entries.
+- [ ] Validate Terraform configs for dev/staging/prod (`init -backend=false`, `validate`).
+
+**Work Log**
+- 00:01 Confirmed main branch clean; ready to work directly on `main`.
+- 00:18 Added `infra/terraform/envs/prod` (backend template, variables, monitoring, Secrets Manager) and refreshed docs (`STATE_SETUP`, handoff, TODO, deploy notes).
+- 00:32 Ran `terraform -chdir=infra/terraform/envs/{dev,staging,prod} init -backend=false`; `validate` succeeded for dev/prod but staging repeatedly hit provider plugin timeouts ("timeout while waiting for plugin to start") despite retries; documented as risk.
+
+**Result**
+- done — see checkpoint docs/agents/checkpoints/2025-10-25_10-05-PDT.md
+
+**Evidence**
+- `terraform -chdir=infra/terraform/envs/dev init -backend=false`
+- `terraform -chdir=infra/terraform/envs/dev validate`
+- `terraform -chdir=infra/terraform/envs/prod init -backend=false`
+- `terraform -chdir=infra/terraform/envs/prod validate`
+- `terraform -chdir=infra/terraform/envs/staging validate` (fails with plugin timeout)
+
+**Next**
+- [ ] Resolve staging `terraform validate` plugin timeout before next apply.
+- [ ] Provision prod AWS resources + GitHub environment entries once approvals defined.
+
+**Handoff**
+- Current state: ready w/ staging validation caveat
+- Owner (if any): codex
+- Timebox remaining: 0m
+
 ## [2025-10-25 09:36 PDT] Define promotion policy & workflow gates
 
 **Goal**
