@@ -1,4 +1,4 @@
-# DoDeck Service — Handoff Summary (2025-10-23)
+# DoDeck Service — Handoff Summary (2025-10-25)
 
 ## Context & Achievements
 - **Service deploy pipeline** (`service-ci`) now builds, pushes, and applies Terraform. Verified dev run (`gh run 18741630014`).
@@ -9,6 +9,7 @@
   - GitHub Actions deploy job accepts `environment` input; dynamic backend config & vars.
   - IAM deploy role expanded to cover staging resources (DynamoDB, Secrets Manager, IAM/ECR API calls).
   - Staging run (`gh run 18753998898`) succeeded: App Runner `https://pi57pcetyg.us-west-2.awsapprunner.com`, DynamoDB table `dodeck-staging`.
+- **Promotion policy codified**: workflow_dispatch now defaults to dev, allows staging only from `main`, and restricts prod deploys to signed tags; GitHub environments should enforce manual approvals for staging/prod.
 - **Documentation & tracking** updated (`DEPLOY_NOTES.md`, `STATE_SETUP.md`, `docs/agents/journal.md`, checkpoints, TODO).
 
 ## Repository State
@@ -23,19 +24,19 @@
 
 ## Outstanding TODOs
 - **Monitoring/Alerting**: add CloudWatch alarms (App Runner health, DynamoDB errors) and notification targets.
-- **Promotion Policy**: define dev → staging → prod workflow (potential GitHub environment protection/approvals).
 - **Production Environment**: mirror staging setup (backend config, secrets/vars, App Runner & DynamoDB resources).
 - **Observability**: consider enabling App Runner observability (needs configuration ARN) once logging destination decided.
 - **Alert Routing**: once the project stabilizes, attach SNS/email/webhook subscribers to CloudWatch alarms.
+- **Secrets Rotation**: decide how/when to rotate the Auth0 secrets now that they live in Secrets Manager.
 
 ## Next Suggested Steps
-1. Configure CloudWatch alarms/notifications for dev & staging App Runner services.
-2. Define long-lived Auth0 secret rotation policy now that Secrets Manager is in place (optional future work).
-3. Draft approval gates / promotion strategy in `.github/workflows/service.yml` (possible environments: staging, prod).
-4. If production is the next priority, clone staging pattern under `infra/terraform/envs/prod` and set up GitHub environment secrets.
+1. Configure CloudWatch alarms/notifications for dev & staging App Runner services (plus downstream notifications).
+2. Clone staging into a production Terraform environment and wire GitHub environment secrets/approvals.
+3. Decide on Auth0 secret rotation cadence (Secrets Manager rotation lambda or manual SOP).
+4. Plan observability (CloudWatch logs/metrics exports) before adding alert subscribers.
 
 ## Key Commands/References
-- Run workflow manually:  
+- Run workflow manually (dev/staging only):  
   `gh workflow run service-ci -R ryanlatham/dodeck -f environment=dev|staging --ref main`
 - Health checks:  
   `curl https://skcdqfw5pt.us-west-2.awsapprunner.com/healthz`  

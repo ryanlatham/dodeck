@@ -7,9 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment target (default: dev)"
-        required: false
+        description: "Deployment target"
+        required: true
         default: "dev"
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -41,18 +46,70 @@ jobs:
         run: docker compose -f tests/docker-compose.yml down
       # Build & push to ECR + deploy via Terraform can be added here.
 
+  promotion-policy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    outputs:
+      target_env: ${{ steps.set-target.outputs.target_env }}
+    steps:
+      - id: set-target
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ENV: ${{ github.event.inputs.environment }}
+        run: |
+          set -euo pipefail
+          target="${EVENT_ENV}"
+          if [ -z "${target}" ]; then
+            if [ "${EVENT_NAME}" = "workflow_dispatch" ]; then
+              target="dev"
+            else
+              target="prod"
+            fi
+          fi
+          echo "target_env=${target}" >> "$GITHUB_OUTPUT"
+      - name: Enforce promotion policy
+        env:
+          TARGET_ENV: ${{ steps.set-target.outputs.target_env }}
+          REF: ${{ github.ref }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          set -euo pipefail
+          case "${TARGET_ENV}" in
+            dev)
+              ;;
+            staging)
+              if [ "${REF}" != "refs/heads/main" ]; then
+                echo "Staging deploys must run from refs/heads/main" >&2
+                exit 1
+              fi
+              ;;
+            prod)
+              if [ "${EVENT_NAME}" != "push" ] || [ "${REF_TYPE}" != "tag" ]; then
+                echo "Production deploys require git tags" >&2
+                exit 1
+              fi
+              ;;
+            *)
+              echo "Unknown target environment: ${TARGET_ENV}" >&2
+              exit 1
+              ;;
+          esac
+
   deploy:
-    name: deploy-${{ github.event.inputs.environment || 'dev' }}
-    needs: build-test
+    name: deploy-${{ needs.promotion-policy.outputs.target_env }}
+    needs:
+      - build-test
+      - promotion-policy
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     environment:
-      name: ${{ github.event.inputs.environment || 'dev' }}
+      name: ${{ needs.promotion-policy.outputs.target_env }}
     permissions:
       id-token: write
       contents: read
     env:
-      TARGET_ENV: ${{ github.event.inputs.environment || 'dev' }}
+      TARGET_ENV: ${{ needs.promotion-policy.outputs.target_env }}
     steps:
       - uses: actions/checkout@v4
 

@@ -1,3 +1,38 @@
+## [2025-10-25 09:36 PDT] Define promotion policy & workflow gates
+
+**Goal**
+- Enforce an explicit dev → staging → prod promotion policy via GitHub Actions environment gates and documentation updates.
+
+**Context**
+- Files: .github/workflows/service.yml, docs/agents/{todo,decisions}.md, docs/agents/checkpoints/**
+- Related checkpoints: 2025-10-25_09-45-PDT (secrets migration)
+
+**Plan**
+- [x] Review current workflow + GitHub environment settings to identify missing approval gates.
+- [x] Update workflow to require staging deploy approval and restrict prod deploy trigger (include job dependencies/conditions).
+- [x] Document promotion policy (decisions/todo) and capture checkpoint after validation.
+
+**Work Log**
+- 00:01 Created branch `feature/promotion-policy`; reviewed TODO/handoff items to confirm priority.
+- 00:12 Added `promotion-policy` guard job + choice input, wired deploy job to guard outputs.
+- 00:18 Ran `actionlint` to validate workflow syntax.
+- 00:26 Updated docs (TODO, decisions, handoff, checkpoint, journal) to capture the new policy & backlog items.
+
+**Result**
+- done — see checkpoint docs/agents/checkpoints/2025-10-25_09-55-PDT.md
+
+**Evidence**
+- `actionlint`
+
+**Next**
+- [ ] Deliver monitoring/alerting baseline + alert routing.
+- [ ] Scaffold production environment + approvals once monitoring lands.
+
+**Handoff**
+- Current state: ready
+- Owner (if any): codex
+- Timebox remaining: 0m
+
 ## [2025-10-25 09:10 PDT] Evaluate Auth0 secrets migration to Secrets Manager
 
 **Goal**
@@ -5,7 +40,7 @@
 
 **Context**
 - Files: infra/terraform/modules/{apprunner,auth0_secrets}, infra/terraform/envs/{dev,staging}/**, service/DEPLOY_NOTES.md, docs/agents/{todo,decisions}.md
-- Related checkpoints: 2025-10-25_09-06-PDT (monitoring baseline)
+- Related checkpoints: 2025-10-22_22-30-PT (remote state + IAM setup)
 
 **Plan**
 - [x] Analyze current SSM usage and App Runner secret wiring to define requirements for Secrets Manager.

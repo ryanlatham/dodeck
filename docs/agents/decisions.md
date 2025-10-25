@@ -25,3 +25,10 @@
 **Rationale:** Aligns with AWS best practices, enables lifecycle policies/rotation later, and consolidates permissions around Secrets Manager APIs.
 **Implications:** App Runner instance role and deploy IAM role must allow `secretsmanager:GetSecretValue` plus `kms:Decrypt` on `alias/aws/secretsmanager`; legacy SSM dependencies can be retired.
 **Review Date:** 2026-04-01
+
+### [2025-10-25] Decision: Deployment promotion policy & approvals
+**Context:** Needed a clear rule set for which Git refs may deploy to dev/staging/prod plus a mechanism for manual approvals.
+**Decision:** Gate deployments via workflow inputs + environment protection: manual runs default to `dev`, `staging` runs must target `refs/heads/main`, and `prod` deploys are tag-only. GitHub environments (`staging`, `prod`) should enforce manual approvals in the UI.
+**Rationale:** Prevents accidental promotions, keeps dev fast, and codifies the expectation that prod releases follow a tagged artefact.
+**Implications:** Operators must create/maintain GitHub environment rules (required reviewers, secrets) matching the workflow, and release managers must cut signed tags for prod deploys.
+**Review Date:** 2026-04-01
