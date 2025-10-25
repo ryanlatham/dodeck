@@ -18,3 +18,10 @@
 **Rationale:** Removes static secrets, supports short-lived credentials, and aligns with AWS security guidance.
 **Implications:** Must provision IAM role with appropriate trust & permission policies; workflow now assumes role and requires repository secrets/variables documented in `service/DEPLOY_NOTES.md`.
 **Review Date:** 2026-01-01
+
+### [2025-10-25] Decision: CloudWatch + SNS monitoring baseline
+**Context:** Need actionable alerts when App Runner fails (HTTP 5xx or zero active instances) or DynamoDB throttles, covering every environment with consistent notification plumbing.
+**Decision:** Manage monitoring via Terraform module that provisions an SNS topic plus CloudWatch alarms for App Runner (5xx + ActiveInstances) and DynamoDB (ThrottledRequests) per environment; operators provide subscriber emails through `alert_emails`.
+**Rationale:** Keeps alarm definitions versioned next to infrastructure, avoids per-env drift, and makes notification routing configurable without editing Terraform code.
+**Implications:** Each environment must supply at least one email subscription (or integrate SNS with downstream tooling) to receive alerts; follow-up work can extend the module with Chatbot/webhooks as needs evolve.
+**Review Date:** 2026-04-01

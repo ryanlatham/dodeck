@@ -1,3 +1,4 @@
-- [ ] Add monitoring/alerting (CloudWatch alarms, App Runner health notifications) for service endpoints.
+- [x] Add monitoring/alerting (CloudWatch alarms, App Runner health notifications) for service endpoints. (2025-10-25)
 - [ ] Evaluate migrating Auth0 secrets to AWS Secrets Manager (with Terraform) for rotation support.
 - [ ] Define promotion policy (dev → staging → prod) with manual approval gates in Actions workflows.
+- [ ] Scaffold production environment (Terraform env + GitHub environment secrets) mirroring staging pattern.

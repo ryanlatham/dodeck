@@ -1,3 +1,42 @@
+## [2025-10-25 08:54 PDT] Add CloudWatch alarms for App Runner & DynamoDB
+
+**Goal**
+- Provide baseline monitoring by adding CloudWatch alarms (App Runner health + DynamoDB throttles) and SNS notifications for each environment.
+
+**Context**
+- Files: infra/terraform/modules/{apprunner,monitoring}, infra/terraform/envs/{dev,staging}/main.tf, docs/agents/{todo,decisions}.md
+- Related checkpoints: 2025-10-23_08-25-PT
+
+**Plan**
+- [ ] Confirm existing Terraform outputs support monitoring (service ARN/name, table ARN) & extend as needed.
+- [ ] Create reusable monitoring module (SNS topic, optional email subs, CloudWatch alarms for App Runner + DynamoDB).
+- [ ] Integrate module into dev/staging envs with variables for notification emails and alarm tuning.
+- [ ] Validate Terraform plans locally and update docs/todo/decisions to capture new monitoring baseline.
+
+**Work Log**
+- 00:02 Reviewed README + handoff + journal to understand outstanding monitoring tasks.
+- 00:18 Built `modules/monitoring` (SNS topic + App Runner/DynamoDB alarms) and wired variables/locals into dev + staging Terraform envs.
+- 00:28 Ran `terraform fmt` plus `terraform -chdir=infra/terraform/envs/{dev,staging} init -backend=false` and `validate` to ensure configs compile with AWS provider 6.18.0.
+- 00:34 Updated docs (todo + decisions) and captured checkpoint summary; noted need for real subscriber emails per environment.
+
+**Result**
+- done — see checkpoint docs/agents/checkpoints/2025-10-25_09-06-PDT.md
+
+**Evidence**
+- `terraform -chdir=infra/terraform/envs/dev init -backend=false`
+- `terraform -chdir=infra/terraform/envs/dev validate`
+- `terraform -chdir=infra/terraform/envs/staging init -backend=false`
+- `terraform -chdir=infra/terraform/envs/staging validate`
+
+**Next**
+- [ ] Collect/assign alert subscriber endpoints (email/SNS integrations) for each environment.
+- [ ] Continue with secrets-manager evaluation for Auth0 config.
+
+**Handoff**
+- Current state: ready
+- Owner (if any): codex
+- Timebox remaining: 0m
+
 ## [2025-10-22 22:30 PT] Provision remote state + deploy IAM role
 
 **Goal**
