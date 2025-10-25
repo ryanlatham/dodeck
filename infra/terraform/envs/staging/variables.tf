@@ -27,3 +27,8 @@ variable "environment_name" {
   type    = string
   default = "staging"
 }
+
+variable "alert_emails" {
+  type    = list(string)
+  default = []
+}
