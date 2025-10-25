@@ -29,6 +29,16 @@ variable "tags" {
   default = {}
 }
 
+variable "observability_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "observability_configuration_arn" {
+  type    = string
+  default = null
+}
+
 data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
@@ -177,7 +187,10 @@ resource "aws_apprunner_service" "this" {
     instance_role_arn = aws_iam_role.instance.arn
   }
 
-  observability_configuration { observability_enabled = false }
+  observability_configuration {
+    observability_enabled           = var.observability_enabled
+    observability_configuration_arn = var.observability_configuration_arn
+  }
   tags = var.tags
 }
 

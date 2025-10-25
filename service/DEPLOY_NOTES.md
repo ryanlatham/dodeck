@@ -27,6 +27,7 @@
 - Provide IAM role with permissions to read/write the `DoDeck` DynamoDB table.
 - Store secrets (Auth0 issuer/audience) in AWS Secrets Manager and map to env vars.
 - Ensure outbound HTTPS access to Auth0 JWKS endpoint if not using overrides.
+- Observability configuration streams traces to AWS X-Ray; instrument FastAPI to emit spans to take advantage of it.
 
 ## Auth0 Configuration
 - API (Machine-to-machine):

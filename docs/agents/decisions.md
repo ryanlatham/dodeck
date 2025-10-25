@@ -39,3 +39,10 @@
 **Rationale:** Prevents accidental promotions, keeps dev fast, and codifies the expectation that prod releases follow a tagged artefact.
 **Implications:** Operators must create/maintain GitHub environment rules (required reviewers, secrets) matching the workflow, and release managers must cut signed tags for prod deploys.
 **Review Date:** 2026-04-01
+
+### [2025-10-25] Decision: Enable App Runner observability (X-Ray)
+**Context:** Needed baseline observability hooks to troubleshoot prod/staging incidents once services deploy across environments.
+**Decision:** Provision per-environment `aws_apprunner_observability_configuration` resources (tracing vendor AWSXRAY) and attach them to App Runner services; expose `enable_observability` toggle for opt-out.
+**Rationale:** Keeps tracing plumbing managed alongside infra, so enabling instrumentation only requires pushing code changes.
+**Implications:** Services must emit X-Ray segments to benefit; monitor AWS costs if tracing volume grows.
+**Review Date:** 2026-04-01

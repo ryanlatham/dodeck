@@ -4,3 +4,4 @@
 - [ ] Post-project: configure SNS/email subscriptions for monitoring alerts once feature work is complete.
 - [x] Scaffold production environment (Terraform env + GitHub environment secrets/approvals) mirroring staging. (2025-10-25)
 - [ ] Provision prod AWS resources via Terraform and populate GitHub `prod` environment secrets/approvals.
+- [ ] Instrument FastAPI service for X-Ray so new observability pipeline emits traces.

@@ -32,3 +32,8 @@ variable "alert_emails" {
   type    = list(string)
   default = []
 }
+
+variable "enable_observability" {
+  type    = bool
+  default = true
+}

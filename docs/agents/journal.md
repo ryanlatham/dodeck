@@ -1,3 +1,42 @@
+## [2025-10-25 10:45 PDT] Enable App Runner observability
+
+**Goal**
+- Provide baseline observability by enabling App Runner’s X-Ray integration via Terraform and wiring environments to use it.
+
+**Context**
+- Files: infra/terraform/modules/{apprunner,observability}, infra/terraform/envs/{dev,staging,prod}, docs/agents/{todo,handoff,decisions}.md
+- Related checkpoints: 2025-10-25_10-05-PDT (prod scaffolding), 2025-10-25_09-55-PDT (promotion policy)
+
+**Plan**
+- [x] Add reusable observability module to provision `aws_apprunner_observability_configuration`.
+- [x] Update App Runner module/envs to consume the configuration and enable tracing.
+- [x] Refresh docs/todo/hand-off state + record checkpoint after terraform validation.
+
+**Work Log**
+- 00:02 Logged open TODO (Observability) and gathered AWS docs for `aws_apprunner_observability_configuration`.
+- 00:18 Added `modules/observability`, updated App Runner module + envs (dev/staging/prod) with `enable_observability` flag, and refreshed docs (handoff/todo/decision).
+- 00:28 Ran `terraform -chdir=infra/terraform/envs/{dev,staging,prod} init -backend=false` and `validate` to confirm configs compile.
+
+**Result**
+- done — see checkpoint docs/agents/checkpoints/2025-10-25_10-45-PDT.md
+
+**Evidence**
+- `terraform -chdir=infra/terraform/envs/dev init -backend=false`
+- `terraform -chdir=infra/terraform/envs/dev validate`
+- `terraform -chdir=infra/terraform/envs/staging init -backend=false`
+- `terraform -chdir=infra/terraform/envs/staging validate`
+- `terraform -chdir=infra/terraform/envs/prod init -backend=false`
+- `terraform -chdir=infra/terraform/envs/prod validate`
+
+**Next**
+- [ ] Instrument FastAPI for X-Ray traces to take advantage of observability.
+- [ ] Wire alert subscribers + prod environment secrets before first prod deploy.
+
+**Handoff**
+- Current state: ready
+- Owner (if any): codex
+- Timebox remaining: 0m
+
 ## [2025-10-25 09:50 PDT] Scaffold production environment
 
 **Goal**

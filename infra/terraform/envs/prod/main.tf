@@ -52,7 +52,9 @@ module "apprunner" {
     AUTH0_ISSUER   = module.auth0_secrets.auth0_issuer_secret_arn
     AUTH0_AUDIENCE = module.auth0_secrets.auth0_audience_secret_arn
   }
-  tags = local.tags
+  observability_enabled           = var.enable_observability
+  observability_configuration_arn = module.observability.observability_configuration_arn
+  tags                            = local.tags
 }
 
 module "monitoring" {
@@ -63,6 +65,14 @@ module "monitoring" {
   ddb_table_name         = module.ddb.table_name
   alarm_emails           = var.alert_emails
   tags                   = local.tags
+}
+
+module "observability" {
+  source          = "../../modules/observability"
+  project_name    = var.project_name
+  environment     = var.environment_name
+  enable_tracing  = var.enable_observability
+  tags            = local.tags
 }
 
 output "service_url"         { value = module.apprunner.service_url }
