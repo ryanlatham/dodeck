@@ -26,7 +26,7 @@
 ## Outstanding TODOs
 - **Monitoring/Alerting**: wire alert subscribers (SNS/email/webhook) to the new CloudWatch alarms.
 - **Production Environment**: provision AWS resources + GitHub `prod` environment secrets/approvals using the new Terraform env.
-- **Observability instrumentation**: App Runner now publishes to X-Ray; instrument the FastAPI service so traces are emitted.
+- **Observability**: FastAPI now emits X-Ray traces; monitor spans and plan log aggregation as traffic ramps up.
 - **Secrets Rotation**: decide how/when to rotate the Auth0 secrets now that they live in Secrets Manager.
 
 ## Next Suggested Steps

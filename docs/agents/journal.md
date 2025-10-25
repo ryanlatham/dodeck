@@ -1,3 +1,35 @@
+## [2025-10-25 10:50 PDT] Instrument FastAPI for X-Ray traces
+
+**Goal**
+- Emit AWS X-Ray traces from the FastAPI service so the new App Runner observability wiring produces meaningful data across envs.
+
+**Context**
+- Files: service/src/** (instrumentation, middleware), service/requirements*, infra/terraform/envs/** (env vars), docs/agents/{todo,decisions,handoff}.md
+- Related checkpoints: 2025-10-25_10-45-PDT (observability), 2025-10-25_09-55-PDT (promotion policy)
+
+**Plan**
+- [ ] Add AWS X-Ray SDK dependencies and instrument FastAPI/DynamoDB clients.
+- [ ] Ensure App Runner container exports `AWS_XRAY_DAEMON_ADDRESS` or uses AWS-managed daemon.
+- [ ] Document operational changes (deploy notes, handoff) and validate via tests (unit/integration) plus `pytest`.
+
+**Work Log**
+- 00:01 Reviewed observability TODO/decision entries to scope instrumentation.
+
+**Result**
+- in progress
+
+**Evidence**
+- n/a — pending implementation
+
+**Next**
+- [ ] Update service code/requirements with X-Ray instrumentation
+- [ ] Run `pytest` + manual smoke (if feasible) and capture checkpoint
+
+**Handoff**
+- Current state: in progress
+- Owner (if any): codex
+- Timebox remaining: 55m
+
 ## [2025-10-25 10:45 PDT] Enable App Runner observability
 
 **Goal**

@@ -28,6 +28,21 @@ if settings.cors_allowed_origins:
         allow_headers=["*"],
     )
 
+if settings.enable_xray_tracing:
+    try:  # pragma: no cover - requires AWS runtime
+        from aws_xray_sdk.core import patch, xray_recorder
+        from aws_xray_sdk.ext.fastapi.middleware import XRayMiddleware
+
+        xray_kwargs = {"service": settings.service_name}
+        if settings.xray_dynamic_naming:
+            xray_kwargs["dynamic_naming"] = settings.xray_dynamic_naming
+        xray_recorder.configure(**xray_kwargs)
+        patch(("boto3",))
+        app.add_middleware(XRayMiddleware, recorder=xray_recorder)
+        logging.info("X-Ray tracing enabled for %s", settings.service_name)
+    except ImportError:  # pragma: no cover - safety fallback
+        logging.warning("aws-xray-sdk not installed; tracing disabled")
+
 
 @app.get("/healthz")
 def healthz():

@@ -36,6 +36,9 @@ class Settings:
     dynamodb_endpoint_url: Optional[str] = os.getenv("DYNAMODB_ENDPOINT_URL")
 
     environment: str = os.getenv("ENVIRONMENT", "local")
+    service_name: str = os.getenv("SERVICE_NAME", "dodeck-service")
+    enable_xray_tracing: bool = field(default_factory=lambda: _bool(os.getenv("ENABLE_XRAY_TRACING"), False))
+    xray_dynamic_naming: Optional[str] = os.getenv("XRAY_DYNAMIC_NAMING")
 
 
 settings = Settings()

@@ -47,6 +47,8 @@ module "apprunner" {
     CORS_ALLOWED_ORIGINS   = var.cors_allowed_origins
     LOG_LEVEL              = "info"
     ENVIRONMENT            = var.environment_name
+    SERVICE_NAME           = local.service_name
+    ENABLE_XRAY_TRACING    = var.enable_observability ? "true" : "false"
   }
   env_secret_arns = {
     AUTH0_ISSUER   = module.auth0_secrets.auth0_issuer_secret_arn
