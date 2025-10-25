@@ -1,3 +1,41 @@
+## [2025-10-25 09:10 PDT] Evaluate Auth0 secrets migration to Secrets Manager
+
+**Goal**
+- Replace SSM parameters with AWS Secrets Manager secrets for Auth0 issuer/audience and update App Runner + Terraform references accordingly.
+
+**Context**
+- Files: infra/terraform/modules/{apprunner,auth0_secrets}, infra/terraform/envs/{dev,staging}/**, service/DEPLOY_NOTES.md, docs/agents/{todo,decisions}.md
+- Related checkpoints: 2025-10-25_09-06-PDT (monitoring baseline)
+
+**Plan**
+- [x] Analyze current SSM usage and App Runner secret wiring to define requirements for Secrets Manager.
+- [x] Implement Terraform module/changes to create Secrets Manager secrets + App Runner secret mapping for dev/staging; update IAM policies as needed.
+- [x] Validate Terraform configs and document migration approach (decision log, TODO updates, checkpoint).
+
+**Work Log**
+- 00:02 Confirmed AWS access via `aws sts get-caller-identity`; reviewed TODO request to delay alert email wiring.
+- 00:14 Replaced SSM parameters with new `auth0_secrets` Terraform module, updated App Runner IAM policy for Secrets Manager support, and refreshed env outputs/docs/todo entries.
+- 00:28 Ran `terraform -chdir=infra/terraform/envs/{dev,staging} init -backend=false` + `validate`; cleaned `.terraform` dirs and recorded decisions/checkpoints.
+
+**Result**
+- done — see checkpoint docs/agents/checkpoints/2025-10-25_09-45-PDT.md
+
+**Evidence**
+- `aws sts get-caller-identity`
+- `terraform -chdir=infra/terraform/envs/dev init -backend=false`
+- `terraform -chdir=infra/terraform/envs/dev validate`
+- `terraform -chdir=infra/terraform/envs/staging init -backend=false`
+- `terraform -chdir=infra/terraform/envs/staging validate`
+
+**Next**
+- [ ] Attach alert subscribers (email/SNS) once project lands.
+- [ ] Continue with promotion policy + production environment tasks.
+
+**Handoff**
+- Current state: ready
+- Owner (if any): codex
+- Timebox remaining: 0m
+
 ## [2025-10-22 22:30 PT] Provision remote state + deploy IAM role
 
 **Goal**

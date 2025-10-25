@@ -5,7 +5,7 @@
 **Implications:** Operators must avoid setting overrides in production; document variable usage in deploy notes. Future smoke tests should verify override vars are unset in prod.
 **Review Date:** 2026-01-01
 
-### [2025-10-22] Decision: Store Auth0 service config in SSM SecureString
+### [2025-10-22] Decision: Store Auth0 service config in SSM SecureString _(superseded 2025-10-25)_
 **Context:** App Runner needs Auth0 issuer/audience secrets without embedding static values in Terraform state or environment files.
 **Decision:** Manage `AUTH0_ISSUER` and `AUTH0_AUDIENCE` as SSM SecureString parameters (`/${project}/service/...`) and reference them via App Runner runtime secrets.
 **Rationale:** Keeps credentials in AWS-managed storage, allows rotation without rebuilding infrastructure, and aligns with App Runner best practices.
@@ -18,3 +18,10 @@
 **Rationale:** Removes static secrets, supports short-lived credentials, and aligns with AWS security guidance.
 **Implications:** Must provision IAM role with appropriate trust & permission policies; workflow now assumes role and requires repository secrets/variables documented in `service/DEPLOY_NOTES.md`.
 **Review Date:** 2026-01-01
+
+### [2025-10-25] Decision: Store Auth0 config in AWS Secrets Manager
+**Context:** Need AWS-native rotation support and reduced IAM surface area compared to SSM parameters while feeding App Runner runtime secrets.
+**Decision:** Provision per-environment Secrets Manager secrets (`/${project}/service/auth0_*`) via Terraform and inject them into App Runner using secret ARNs.
+**Rationale:** Aligns with AWS best practices, enables lifecycle policies/rotation later, and consolidates permissions around Secrets Manager APIs.
+**Implications:** App Runner instance role and deploy IAM role must allow `secretsmanager:GetSecretValue` plus `kms:Decrypt` on `alias/aws/secretsmanager`; legacy SSM dependencies can be retired.
+**Review Date:** 2026-04-01

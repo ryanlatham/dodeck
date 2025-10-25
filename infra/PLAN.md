@@ -5,7 +5,7 @@
   - DynamoDB table (`DoDeck`)
   - ECR repository for service image
   - App Runner service (HTTPS public endpoint)
-  - SSM Parameter Store / Secrets (for config)
+- AWS Secrets Manager entries for runtime config (Auth0, etc.)
   - CloudWatch logs
   - (Later) S3 + CloudFront + ACM for web
 

@@ -36,6 +36,14 @@ data "aws_region" "current" {}
 locals {
   runtime_env_vars    = merge({ TABLE_NAME = var.table_name }, var.env_vars)
   runtime_env_secrets = { for name, arn in var.env_secret_arns : name => arn }
+  secret_services = {
+    for arn in values(var.env_secret_arns) :
+    arn => element(split(":", arn), 2)
+  }
+  ssm_secret_arns            = [for arn, service in local.secret_services : arn if service == "ssm"]
+  secretsmanager_secret_arns = [for arn, service in local.secret_services : arn if service == "secretsmanager"]
+  has_ssm_secrets            = length(local.ssm_secret_arns) > 0
+  has_secretsmanager_secrets = length(local.secretsmanager_secret_arns) > 0
 }
 
 data "aws_iam_policy_document" "assume" {
@@ -76,7 +84,7 @@ data "aws_iam_policy_document" "instance" {
   }
 
   dynamic "statement" {
-    for_each = length(local.runtime_env_secrets) > 0 ? [1] : []
+    for_each = local.has_ssm_secrets ? [1] : []
     content {
       sid = "SSMParameterAccess"
       actions = [
@@ -84,17 +92,40 @@ data "aws_iam_policy_document" "instance" {
         "ssm:GetParameters",
         "ssm:GetParametersByPath",
       ]
-      resources = values(var.env_secret_arns)
+      resources = local.ssm_secret_arns
     }
   }
 
   dynamic "statement" {
-    for_each = length(local.runtime_env_secrets) > 0 ? [1] : []
+    for_each = local.has_ssm_secrets ? [1] : []
     content {
       sid     = "KMSDecrypt"
       actions = ["kms:Decrypt"]
       resources = [
         "arn:${data.aws_partition.current.partition}:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/aws/ssm"
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = local.has_secretsmanager_secrets ? [1] : []
+    content {
+      sid = "SecretsManagerAccess"
+      actions = [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue",
+      ]
+      resources = local.secretsmanager_secret_arns
+    }
+  }
+
+  dynamic "statement" {
+    for_each = local.has_secretsmanager_secrets ? [1] : []
+    content {
+      sid     = "SecretsManagerKMSDecrypt"
+      actions = ["kms:Decrypt"]
+      resources = [
+        "arn:${data.aws_partition.current.partition}:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/aws/secretsmanager"
       ]
     }
   }

@@ -11,6 +11,7 @@ provider "aws" {
 }
 
 locals {
+  service_name = "${var.project_name}-api"
   tags = {
     Project     = var.project_name
     Environment = "staging"
@@ -26,25 +27,18 @@ data "aws_ecr_repository" "service" {
   name = var.service_repository_name
 }
 
-resource "aws_ssm_parameter" "auth0_issuer" {
-  name        = "/${var.project_name}/service/auth0_issuer"
-  description = "Auth0 issuer for DoDeck service (staging)"
-  type        = "SecureString"
-  value       = var.auth0_issuer
-  tags        = local.tags
-}
-
-resource "aws_ssm_parameter" "auth0_audience" {
-  name        = "/${var.project_name}/service/auth0_audience"
-  description = "Auth0 audience for DoDeck service (staging)"
-  type        = "SecureString"
-  value       = var.auth0_audience
-  tags        = local.tags
+module "auth0_secrets" {
+  source         = "../../modules/auth0_secrets"
+  project_name   = var.project_name
+  environment    = var.environment_name
+  auth0_issuer   = var.auth0_issuer
+  auth0_audience = var.auth0_audience
+  tags           = local.tags
 }
 
 module "apprunner" {
   source       = "../../modules/apprunner"
-  service_name = "${var.project_name}-api"
+  service_name = local.service_name
   image        = "${data.aws_ecr_repository.service.repository_url}:${var.service_image_tag}"
   table_name   = module.ddb.table_name
   table_arn    = module.ddb.table_arn
@@ -55,8 +49,8 @@ module "apprunner" {
     ENVIRONMENT            = var.environment_name
   }
   env_secret_arns = {
-    AUTH0_ISSUER   = aws_ssm_parameter.auth0_issuer.arn
-    AUTH0_AUDIENCE = aws_ssm_parameter.auth0_audience.arn
+    AUTH0_ISSUER   = module.auth0_secrets.auth0_issuer_secret_arn
+    AUTH0_AUDIENCE = module.auth0_secrets.auth0_audience_secret_arn
   }
   tags = local.tags
 }
@@ -65,5 +59,5 @@ output "service_url" { value = module.apprunner.service_url }
 output "table_name" { value = module.ddb.table_name }
 output "ecr_repo_url" { value = data.aws_ecr_repository.service.repository_url }
 
-output "auth0_issuer_parameter" { value = aws_ssm_parameter.auth0_issuer.name }
-output "auth0_audience_parameter" { value = aws_ssm_parameter.auth0_audience.name }
+output "auth0_issuer_secret" { value = module.auth0_secrets.auth0_issuer_secret_name }
+output "auth0_audience_secret" { value = module.auth0_secrets.auth0_audience_secret_name }

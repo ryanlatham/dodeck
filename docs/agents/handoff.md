@@ -3,11 +3,11 @@
 ## Context & Achievements
 - **Service deploy pipeline** (`service-ci`) now builds, pushes, and applies Terraform. Verified dev run (`gh run 18741630014`).
 - **App Runner (dev)** live at `https://skcdqfw5pt.us-west-2.awsapprunner.com`. Health returns version `1.0.0` with environment `dev`.
-- **DynamoDB (dev)** table `dodeck` provisioned; SSM SecureString parameters `/dodeck/service/auth0_issuer` & `/dodeck/service/auth0_audience` created.
+- **DynamoDB (dev)** table `dodeck` provisioned; Auth0 issuer/audience now stored in AWS Secrets Manager (`/${project}/service/auth0_*`) and wired into App Runner.
 - **Staging scaffolding** added:
   - `infra/terraform/envs/staging` mirrors dev with separate backend key, env defaults, and `environment_name`.
   - GitHub Actions deploy job accepts `environment` input; dynamic backend config & vars.
-  - IAM deploy role expanded to cover staging resources (DynamoDB, SSM, IAM/ECR API calls).
+  - IAM deploy role expanded to cover staging resources (DynamoDB, Secrets Manager, IAM/ECR API calls).
   - Staging run (`gh run 18753998898`) succeeded: App Runner `https://pi57pcetyg.us-west-2.awsapprunner.com`, DynamoDB table `dodeck-staging`.
 - **Documentation & tracking** updated (`DEPLOY_NOTES.md`, `STATE_SETUP.md`, `docs/agents/journal.md`, checkpoints, TODO).
 
@@ -23,14 +23,14 @@
 
 ## Outstanding TODOs
 - **Monitoring/Alerting**: add CloudWatch alarms (App Runner health, DynamoDB errors) and notification targets.
-- **Secrets Management**: evaluate migrating Auth0 config to AWS Secrets Manager (with Terraform) for rotation.
 - **Promotion Policy**: define dev → staging → prod workflow (potential GitHub environment protection/approvals).
 - **Production Environment**: mirror staging setup (backend config, secrets/vars, App Runner & DynamoDB resources).
 - **Observability**: consider enabling App Runner observability (needs configuration ARN) once logging destination decided.
+- **Alert Routing**: once the project stabilizes, attach SNS/email/webhook subscribers to CloudWatch alarms.
 
 ## Next Suggested Steps
 1. Configure CloudWatch alarms/notifications for dev & staging App Runner services.
-2. Decide on Auth0 secret storage (SSM vs Secrets Manager) and implement Terraform changes.
+2. Define long-lived Auth0 secret rotation policy now that Secrets Manager is in place (optional future work).
 3. Draft approval gates / promotion strategy in `.github/workflows/service.yml` (possible environments: staging, prod).
 4. If production is the next priority, clone staging pattern under `infra/terraform/envs/prod` and set up GitHub environment secrets.
 

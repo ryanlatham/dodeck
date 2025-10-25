@@ -25,7 +25,7 @@
 ## AWS App Runner
 - Configure App Runner health check path `/healthz`.
 - Provide IAM role with permissions to read/write the `DoDeck` DynamoDB table.
-- Store secrets (Auth0 issuer/audience) in AWS Secrets Manager or SSM and map to env vars.
+- Store secrets (Auth0 issuer/audience) in AWS Secrets Manager and map to env vars.
 - Ensure outbound HTTPS access to Auth0 JWKS endpoint if not using overrides.
 
 ## Auth0 Configuration
@@ -35,7 +35,7 @@
 - Post-login Action injects namespaced claims:
   - `https://dodeck.app/email`
   - `https://dodeck.app/email_verified`
-- Terraform SSM parameters (dev defaults):
+- Terraform-managed Secrets Manager entries (per environment):
   - `/${project}/service/auth0_issuer` → `AUTH0_ISSUER`
   - `/${project}/service/auth0_audience` → `AUTH0_AUDIENCE`
 
@@ -54,7 +54,7 @@
 4. Record outputs:
    - `service_url` (public HTTPS endpoint)
    - `table_name`
-   - `auth0_*` parameter names
+   - `auth0_*` secret names
 5. Update CI/CD to push new image tag and trigger App Runner auto deployment.
 6. Smoke test:
    - `curl $service_url/healthz`
@@ -66,7 +66,7 @@
 - **Preferred:** GitHub Actions OIDC → IAM role (see `docs/agents/decisions.md`). Create role `dodeck-service-deploy` with trust policy for `token.actions.githubusercontent.com` and attach permissions for:
   - ECR (`ecr:BatchCheckLayerAvailability`, `ecr:CompleteLayerUpload`, `ecr:InitiateLayerUpload`, `ecr:PutImage`, `ecr:UploadLayerPart`, `ecr:GetAuthorizationToken`)
   - App Runner & supporting services (Terraform-managed IAM policies already cover runtime access).
-  - S3/DynamoDB for Terraform state.
+  - Secrets Manager (create/update Auth0 secrets) plus S3/DynamoDB for Terraform state.
 - Configure repository/environment secrets:
   - `AWS_DEPLOY_ROLE_ARN`
   - `TF_STATE_BUCKET`, `TF_STATE_KEY`, `TF_STATE_LOCK_TABLE`
